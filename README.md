@@ -101,7 +101,17 @@ Three layers of defense (see `tests/test_security_isolation.py`):
 ## Run tests
 
 ```bash
-docker compose run --rm api pytest -v --cov=app
+docker compose run --rm api sh -c "alembic upgrade head && pytest -v --cov=app"
+```
+
+Migrations include both schema and demo seed data. Production rollback examples:
+
+```bash
+# Revert only the demo seed data and keep the schema.
+docker compose run --rm api alembic downgrade 0001_create_hr_schema
+
+# Revert the full schema.
+docker compose run --rm api alembic downgrade base
 ```
 
 Key tests:
